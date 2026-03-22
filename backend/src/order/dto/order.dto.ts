@@ -8,6 +8,12 @@ export class CreateOrderItemDto {
   seat: number;
   price: number;
 }
+export class CreateOrderDto {
+  email: string;
+  phone: string;
+  tickets: CreateOrderItemDto[];
+}
+
 
 // Ответ (один билет с id)
 export class OrderItemDto {

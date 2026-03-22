@@ -5,12 +5,13 @@ import {
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { FilmsRepository } from '../repository/films.repository';
+import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
 
 @Injectable()
 export class OrderService {
   constructor(private readonly filmsRepository: FilmsRepository) {}
 
-  async create(orderDto: any) {
+  async create(orderDto: CreateOrderDto) {
     const tickets = orderDto.tickets;
 
     if (!Array.isArray(tickets) || tickets.length === 0) {
