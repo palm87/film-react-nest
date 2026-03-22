@@ -18,7 +18,7 @@ export class FilmsRepository {
     return this.filmModel.findOne({ id }).exec();
   }
 
-    async save(film: FilmDocument) {
+  async save(film: FilmDocument) {
     return film.save();
   }
 }

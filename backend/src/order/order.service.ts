@@ -3,21 +3,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateOrderItemDto, OrderResponseDto } from './dto/order.dto';
+import { randomUUID } from 'crypto';
 import { FilmsRepository } from '../repository/films.repository';
 
 @Injectable()
 export class OrderService {
   constructor(private readonly filmsRepository: FilmsRepository) {}
 
-  async create(orderItems: CreateOrderItemDto[]): Promise<OrderResponseDto> {
-    if (!orderItems.length) {
+  async create(orderDto: any) {
+    const tickets = orderDto.tickets;
+
+    if (!Array.isArray(tickets) || tickets.length === 0) {
       throw new BadRequestException('Заказ не содержит билетов');
     }
 
     const bookedItems = [];
 
-    for (const item of orderItems) {
+    for (const item of tickets) {
       const film = await this.filmsRepository.findById(item.film);
 
       if (!film) {
@@ -41,13 +43,12 @@ export class OrderService {
       }
 
       session.taken.push(place);
+      await this.filmsRepository.save(film);
 
       bookedItems.push({
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         ...item,
       });
-
-      await this.filmsRepository.save(film);
     }
 
     return {
