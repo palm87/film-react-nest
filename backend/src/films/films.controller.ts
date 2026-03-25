@@ -14,11 +14,10 @@ export class FilmsController {
   async findAll(): Promise<FilmsResponseDto> {
     return this.filmsService.findAll();
   }
-
   @Get(':id/schedule')
   async findSchedule(
-    @Param() params: FilmParamsDto,
+  @Param('id') id: string,
   ): Promise<ScheduleResponseDto> {
-    return this.filmsService.findScheduleById(params.id);
-  }
+    return this.filmsService.findScheduleById(id);
+}
 }

@@ -1,24 +1,16 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { FilmsRepository } from '../repository/films.repository';
-import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
+import { CreateOrderDto, OrderItemDto, OrderResponseDto } from './dto/order.dto';
 
 @Injectable()
 export class OrderService {
   constructor(private readonly filmsRepository: FilmsRepository) {}
 
-  async create(orderDto: CreateOrderDto) {
+  async create(orderDto: CreateOrderDto): Promise<OrderResponseDto> {
     const tickets = orderDto.tickets;
 
-    if (!Array.isArray(tickets) || tickets.length === 0) {
-      throw new BadRequestException('Заказ не содержит билетов');
-    }
-
-    const bookedItems = [];
+    const bookedItems: OrderItemDto[] = [];
 
     for (const item of tickets) {
       const film = await this.filmsRepository.findById(item.film);
@@ -45,10 +37,14 @@ export class OrderService {
 
       session.taken.push(place);
       await this.filmsRepository.save(film);
-
       bookedItems.push({
-        id: randomUUID(),
-        ...item,
+      id: randomUUID(),
+      film: item.film,
+      session: item.session,
+      daytime: item.daytime ?? `${item.day} ${item.time}`,
+      row: item.row,
+      seat: item.seat,
+      price: item.price,
       });
     }
 
