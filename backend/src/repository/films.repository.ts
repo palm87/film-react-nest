@@ -17,8 +17,24 @@ export class FilmsRepository {
   async findById(id: string) {
     return this.filmModel.findOne({ id }).exec();
   }
+  async addTakenPlace(
+    filmId: string,
+    sessionId: string,
+    place: string,
+  ): Promise<boolean> {
+    const result = await this.filmModel.updateOne(
+      {
+        id: filmId,
+        'schedule.id': sessionId,
+      },
+      {
+        $push: {
+          'schedule.$.taken': place,
+        },
+      },
+    );
 
-  async save(film: FilmDocument) {
-    return film.save();
+    return result.modifiedCount > 0;
   }
+  
 }
