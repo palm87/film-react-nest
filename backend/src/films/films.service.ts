@@ -1,6 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { FilmsRepository } from '../repository/films.repository';
-import { FilmsResponseDto, ScheduleResponseDto } from './dto/films.dto';
+import {
+  FilmItemDto,
+  FilmsResponseDto,
+  ScheduleItemDto,
+  ScheduleResponseDto,
+} from './dto/films.dto';
 
 @Injectable()
 export class FilmsService {
@@ -9,20 +15,20 @@ export class FilmsService {
   async findAll(): Promise<FilmsResponseDto> {
     const films = await this.filmsRepository.findAll();
 
-    return {
-      total: films.length,
-      items: films.map((film) => ({
-        id: film.id,
-        rating: film.rating,
-        director: film.director,
-        tags: film.tags,
-        title: film.title,
-        about: film.about,
-        description: film.description,
-        image: film.image,
-        cover: film.cover,
-      })),
-    };
+    const items = plainToInstance(FilmItemDto, films, {
+      excludeExtraneousValues: true,
+    });
+
+    return plainToInstance(
+      FilmsResponseDto,
+      {
+        total: items.length,
+        items,
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   async findScheduleById(id: string): Promise<ScheduleResponseDto> {
@@ -32,17 +38,19 @@ export class FilmsService {
       throw new NotFoundException(`Фильм с id ${id} не найден`);
     }
 
-    return {
-      total: film.schedule.length,
-      items: film.schedule.map((item) => ({
-        id: item.id,
-        daytime: item.daytime,
-        hall: item.hall,
-        rows: item.rows,
-        seats: item.seats,
-        price: item.price,
-        taken: item.taken,
-      })),
-    };
+    const items = plainToInstance(ScheduleItemDto, film.schedule, {
+      excludeExtraneousValues: true,
+    });
+
+    return plainToInstance(
+      ScheduleResponseDto,
+      {
+        total: items.length,
+        items,
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 }

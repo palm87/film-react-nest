@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { FilmsRepository } from '../repository/films.repository';
-import { CreateOrderDto, OrderItemDto, OrderResponseDto } from './dto/order.dto';
+import {
+  CreateOrderDto,
+  OrderItemDto,
+  OrderResponseDto,
+} from './dto/order.dto';
 
 @Injectable()
 export class OrderService {
@@ -38,13 +46,13 @@ export class OrderService {
       session.taken.push(place);
       await this.filmsRepository.addTakenPlace(item.film, item.session, place);
       bookedItems.push({
-      id: randomUUID(),
-      film: item.film,
-      session: item.session,
-      daytime: item.daytime ?? `${item.day} ${item.time}`,
-      row: item.row,
-      seat: item.seat,
-      price: item.price,
+        id: randomUUID(),
+        film: item.film,
+        session: item.session,
+        daytime: item.daytime ?? `${item.day} ${item.time}`,
+        row: item.row,
+        seat: item.seat,
+        price: item.price,
       });
     }
 

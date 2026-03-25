@@ -12,7 +12,7 @@ export class ScheduleItem {
   daytime: Date;
 
   @Prop({ required: true })
-  hall: number; 
+  hall: number;
 
   @Prop({ required: true })
   rows: number;
