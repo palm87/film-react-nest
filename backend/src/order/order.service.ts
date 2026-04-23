@@ -43,7 +43,6 @@ export class OrderService {
         );
       }
 
-      session.taken.push(place);
       await this.filmsRepository.addTakenPlace(item.film, item.session, place);
       bookedItems.push({
         id: randomUUID(),

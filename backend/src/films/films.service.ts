@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { FilmsRepository } from '../repository/films.repository';
 import {
-  FilmItemDto,
+  FilmDto,
   FilmsResponseDto,
   ScheduleItemDto,
   ScheduleResponseDto,
@@ -15,7 +15,7 @@ export class FilmsService {
   async findAll(): Promise<FilmsResponseDto> {
     const films = await this.filmsRepository.findAll();
 
-    const items = plainToInstance(FilmItemDto, films, {
+    const items = plainToInstance(FilmDto, films, {
       excludeExtraneousValues: true,
     });
 
