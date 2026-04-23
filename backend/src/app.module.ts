@@ -4,7 +4,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'node:path';
 
-import { configProvider } from './app.config.provider';
 import { FilmsModule } from './films/films.module';
 import { OrderModule } from './order/order.module';
 import { Film } from './entities/film.entity';
@@ -19,12 +18,12 @@ import { Schedule } from './entities/schedule.entity';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: 'localhost',
-        port: 5432,
+        type: configService.get<'postgres'>('DATABASE_TYPE'),
+        host: configService.get<string>('DATABASE_HOST'),
+        port: Number(configService.get<string>('DATABASE_PORT')),
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD') || '',
-        database: 'film',
+        database: configService.get<string>('DATABASE_NAME'),
         entities: [Film, Schedule],
         synchronize: false,
       }),
@@ -38,6 +37,5 @@ import { Schedule } from './entities/schedule.entity';
       serveRoot: '/content/afisha',
     }),
   ],
-  providers: [configProvider],
 })
 export class AppModule {}
